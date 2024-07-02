@@ -1,4 +1,4 @@
-package main
+package apiServer
 
 import (
 	"crypto/md5"
