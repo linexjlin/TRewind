@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/linexjlin/TRewind/apiServer"
 	"github.com/linexjlin/TRewind/chromaManager"
 )
 
@@ -16,7 +17,7 @@ func main() {
 	// Initialize DocDB (assuming ChromaManager has a constructor)
 	docDB, _ := chromaManager.NewChromaManager()
 
-	apiServer := NewServer(docDB)
+	apiServer := apiServer.NewServer(docDB)
 
 	listenAddr := os.Getenv("LISTEN_ADDR")
 	if listenAddr == "" {
