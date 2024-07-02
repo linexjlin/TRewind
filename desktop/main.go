@@ -2,8 +2,10 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/linexjlin/TRewind/apiServer"
 	"github.com/linexjlin/TRewind/chromaManager"
 )
 
@@ -37,6 +39,13 @@ func main() {
 	}
 	core := NewCore(docDB)
 	tray := NewSysTray(core)
+
+	go func() {
+		if listenAddr := os.Getenv("API_LISTEN_ADDR"); listenAddr != "" {
+			apiServer := apiServer.NewServer(docDB)
+			log.Fatal(apiServer.ListenAndServe(listenAddr))
+		}
+	}()
 
 	tray.Run()
 }
