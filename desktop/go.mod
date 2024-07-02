@@ -16,7 +16,9 @@ require (
 	github.com/getlantern/ops v0.0.0-20190325191751-d70cb0d6f85f // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
+	github.com/linexjlin/TRewind/chromaManager v0.0.0-20240702082403-1279a40b88d7 // indirect
 	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c // indirect
+	github.com/philippgille/chromem-go v0.6.0 // indirect
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966 // indirect
 	golang.design/x/clipboard v0.7.0 // indirect
 	golang.org/x/exp v0.0.0-20190731235908-ec7cb31e5a56 // indirect

@@ -18,7 +18,7 @@ func NewCore(db *chromaManager.ChromaManager) *Core {
 
 func (c *Core) importText(text string) {
 	log.Println("import", text)
-	c.db.UpsertDoc()
+	//c.db.UpsertDoc()
 }
 
 func (c *Core) init() {
