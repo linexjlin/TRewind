@@ -1,20 +1,24 @@
 package main
 
-import "log"
+import (
+	"log"
+
+	"github.com/linexjlin/TRewind/chromaManager"
+)
 
 type Core struct {
-	//u           *UserCore
-	//st *SysTray
+	db *chromaManager.ChromaManager
 }
 
-func NewCore() *Core {
-	c := Core{}
+func NewCore(db *chromaManager.ChromaManager) *Core {
+	c := Core{db: db}
 	c.init()
 	return &c
 }
 
 func (c *Core) importText(text string) {
 	log.Println("import", text)
+	c.db.UpsertDoc()
 }
 
 func (c *Core) init() {
