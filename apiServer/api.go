@@ -155,7 +155,7 @@ func (s *ApiServer) retrieveDocument(w http.ResponseWriter, r *http.Request, col
 			"document_content": result.Metadata["content"],
 			"update":           result.Metadata["update"],
 			"extra":            result.Metadata["extra"],
-			"distance":         result.Similarity,
+			"similarity":       result.Similarity,
 		}
 		documents = append(documents, docInfo)
 	}
@@ -189,7 +189,7 @@ func (s *ApiServer) search(w http.ResponseWriter, r *http.Request, collection st
 			"extra":            result.Metadata["extra"],
 			"update":           result.Metadata["update"],
 			"url":              fmt.Sprintf("%s/%s", serverAddr, result.ID),
-			"distance":         result.Similarity,
+			"similarity":       result.Similarity,
 		}
 		documents = append(documents, docInfo)
 	}

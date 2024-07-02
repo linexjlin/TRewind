@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 
 	"github.com/linexjlin/TRewind/chromaManager"
 )
@@ -16,9 +17,14 @@ func NewCore(db *chromaManager.ChromaManager) *Core {
 	return &c
 }
 
-func (c *Core) importText(text string) {
-	log.Println("import", text)
-	//c.db.UpsertDoc()
+func (c *Core) importClipboardText(collection, text string) {
+	id := md5Hash(text)
+	metadata := map[string]string{
+		"update":   time.Now().Format("20060102150405"),
+		"filename": text,
+	}
+	c.db.UpsertDoc(collection, text, id, metadata)
+	log.Println("imported", text)
 }
 
 func (c *Core) init() {

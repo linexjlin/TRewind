@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/getlantern/systray"
 	icon "github.com/linexjlin/systray-icons/tape"
@@ -11,12 +12,17 @@ import (
 )
 
 func NewSysTray(c *Core) *SysTray {
-	tray := SysTray{core: c}
+	collection := os.Getenv("DEFAULT_COLLECTION")
+	if collection == "" {
+		collection = "docs"
+	}
+	tray := SysTray{core: c, collection: collection}
 	return &tray
 }
 
 type SysTray struct {
 	core              *Core
+	collection        string
 	updateHotKeyTitle func(string)
 }
 
@@ -67,7 +73,7 @@ func (st *SysTray) onReady() {
 			clipboardText := string(clipboard.Read(clipboard.FmtText))
 			log.Println("Got clipboardText", clipboardText)
 			if len(clipboardText) > 0 {
-				st.core.importText(clipboardText)
+				st.core.importClipboardText(st.collection, clipboardText)
 			}
 		}
 	}()
