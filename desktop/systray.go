@@ -18,14 +18,19 @@ func NewSysTray(c *Core) *SysTray {
 		defaultCollection = "docs"
 	}
 
-	collections := os.Getenv("SEARCH_SERVER")
+	var collections = []string{}
+	if collectionsStr := os.Getenv("COLLECTIONS"); collectionsStr != "" {
+		collections = strings.Split(collectionsStr, ";")
+	} else {
+		collections = []string{}
+	}
 
 	serverAddr := os.Getenv("API_LISTEN_ADDR")
 	if serverAddr != "" {
 		serverAddr = "127.0.0.1:8601"
 	}
 
-	tray := SysTray{core: c, defaultCollection: defaultCollection, collections: strings.Split(collections, ";"), serverAddr: serverAddr}
+	tray := SysTray{core: c, defaultCollection: defaultCollection, collections: collections, serverAddr: serverAddr}
 	return &tray
 }
 
