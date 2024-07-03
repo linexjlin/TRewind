@@ -32,7 +32,7 @@
             <form @submit.prevent="search" class="mb-8">
                 <div class="flex items-center mb-4">
                     <input type="text" x-model="query" :placeholder="lang === 'zh' ? '输入搜索内容...' : 'Enter search content...'" class="flex-grow p-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <input type="date" x-model="dateFilter" class="p-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="text" x-model="dateFilter" :placeholder="lang === 'zh' ? '时间过滤：2024121115' : 'time filter: 2024121115'" class="w-1/5 p-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <button type="submit" class="bg-blue-500 text-white p-2 rounded-r-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500" x-text="lang === 'zh' ? '搜索' : 'Search'"></button>
                 </div>
             </form>
@@ -46,12 +46,14 @@
                         <div class="text-gray-600 mb-2 content-wrap" x-html="formatContent(result.document_content)"></div>
                         <p class="text-xl font-semibold mb-2 content-wrap" x-text="(lang === 'zh' ? '额外信息: ' : 'Extra: ')"></p>
                         <p class="text-gray-600 mb-4 content-wrap" x-text="result.extra"></p>
-                        <div class="text-gray-500 text-xs content-wrap">
-                            <p x-text="'Similarity: ' + result.similarity + '  Update: ' + result.update + ' URL: ' "> <a :href="result.url">{{ result.url }} </a></p>
-                        </div>
-                        <div class="flex space-x-4 mt-4">
-                            <button @click="editDocument(result)" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500" x-text="lang === 'zh' ? '编辑' : 'Edit'"></button>
-                            <button @click="confirmDelete(result.document_id)" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500" x-text="lang === 'zh' ? '删除' : 'Delete'"></button>
+                        <div class="flex justify-between items-center">
+                            <div class="text-gray-500 text-xs content-wrap">
+                                <p>Similarity: <span x-text="result.similarity"></span>  Update: <span x-text="result.update"></span> URL: <a :href="result.url" class="text-blue-600 underline" target="_blank">Link</a></p>
+                            </div>
+                            <div class="flex space-x-4">
+                                <button @click="editDocument(result)" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500" x-text="lang === 'zh' ? '编辑' : 'Edit'"></button>
+                                <button @click="confirmDelete(result.document_id)" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500" x-text="lang === 'zh' ? '删除' : 'Delete'"></button>
+                            </div>
                         </div>
                     </div>
                 </template>
@@ -115,7 +117,7 @@
                     
                     this.hasSearched = true;
                     const collection = window.location.pathname.split('/')[1];
-                    const url = `http://127.0.0.1:8601/${collection}/search?q=${encodeURIComponent(this.query)}${this.dateFilter ? `&df=${this.dateFilter.replace(/-/g, '')}` : ''}`;
+                    const url = `/${collection}/search?q=${encodeURIComponent(this.query)}${this.dateFilter ? `&df=${this.dateFilter.replace(/-/g, '')}` : ''}`;
                     
                     fetch(url)
                         .then(response => response.json())
@@ -134,7 +136,7 @@
                 
                 updateDocument() {
                     const collection = window.location.pathname.split('/')[1];
-                    const url = `http://127.0.0.1:8601/${collection}/upload_document`;
+                    const url = `/${collection}/upload_document`;
                     
                     fetch(url, {
                         method: 'POST',
@@ -167,7 +169,7 @@
                 
                 deleteDocument(documentId) {
                     const collection = window.location.pathname.split('/')[1];
-                    const url = `http://127.0.0.1:8601/${collection}/delete_document_by_id`;
+                    const url = `/${collection}/delete_document_by_id`;
                     
                     fetch(url, {
                         method: 'DELETE',
