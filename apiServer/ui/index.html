@@ -38,21 +38,21 @@
             </form>
             
             <div x-show="results.length > 0" class="space-y-6">
-                <template x-for="result in results" :key="result.document_id">
-                    <div class="bg-white p-6 rounded-lg shadow">
-                        <p class="text-xl font-semibold mb-2 content-wrap" x-text="(lang === 'zh' ? '文档主题: ' : 'Name: ')"></p>
-                        <h2 class="text-gray-600 mb-2 content-wrap" x-text="result.document_name"></h2>
-                        <p class="text-xl font-semibold mb-2 content-wrap" x-text="(lang === 'zh' ? '文档内容: ' : 'Content: ')"></p>
-                        <div class="text-gray-600 mb-2 content-wrap" x-html="formatContent(result.document_content)"></div>
-                        <p class="text-xl font-semibold mb-2 content-wrap" x-text="(lang === 'zh' ? '额外信息: ' : 'Extra: ')"></p>
-                        <p class="text-gray-600 mb-4 content-wrap" x-text="result.extra"></p>
+                <template x-for="(result, index) in results" :key="result.document_id">
+                    <div :class="['bg-white p-6 rounded-lg shadow', index % 2 === 0 ? 'bg-blue-100' : 'bg-blue-50']">
+                        <h2 class="text-xl font-semibold mb-2 content-wrap text-blue-800" x-text="(lang === 'zh' ? '文档主题: ' : 'Name: ')"></h2>
+                        <p class="text-blue-600 mb-4 content-wrap" x-text="result.document_name"></p>
+                        <h2 class="text-xl font-semibold mb-2 content-wrap text-blue-800" x-text="(lang === 'zh' ? '文档内容: ' : 'Content: ')"></h2>
+                        <div class="text-blue-600 mb-2 content-wrap" x-html="formatContent(result.document_content)"></div>
+                        <h2 class="text-xl font-semibold mb-2 content-wrap text-blue-800" x-text="(lang === 'zh' ? '额外信息: ' : 'Extra: ')"></h2>
+                        <p class="text-blue-600 mb-4 content-wrap" x-text="result.extra"></p>
                         <div class="flex justify-between items-center">
-                            <div class="text-gray-500 text-xs content-wrap">
-                                <p>Similarity: <span x-text="result.similarity"></span>  Update: <span x-text="result.update"></span> URL: <a :href="result.url" class="text-blue-600 underline" target="_blank">Link</a></p>
+                            <div class="text-blue-500 text-xs content-wrap">
+                                <p>Similarity: <span x-text="result.similarity" class="text-blue-700 font-semibold"></span>  Update: <span x-text="result.update" class="text-blue-700 font-semibold"></span> URL: <a :href="result.url" class="text-blue-600 underline" target="_blank">Dowload</a></p>
                             </div>
                             <div class="flex space-x-4">
-                                <button @click="editDocument(result)" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500" x-text="lang === 'zh' ? '编辑' : 'Edit'"></button>
-                                <button @click="confirmDelete(result.document_id)" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500" x-text="lang === 'zh' ? '删除' : 'Delete'"></button>
+                                <button @click="editDocument(result)" class="bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300" x-text="lang === 'zh' ? '编辑' : 'Edit'"></button>
+                                <button @click="confirmDelete(result.document_id)" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400" x-text="lang === 'zh' ? '删除' : 'Delete'"></button>
                             </div>
                         </div>
                     </div>
@@ -114,7 +114,10 @@
 
                 search() {
                     if (!this.query) return;
-                    
+                    const url_addr = new URL(window.location);
+                    url_addr.searchParams.set('q', this.query);
+                    window.history.pushState({}, '', url_addr);
+
                     this.hasSearched = true;
                     const collection = window.location.pathname.split('/')[1];
                     const url = `/${collection}/search?q=${encodeURIComponent(this.query)}${this.dateFilter ? `&df=${this.dateFilter.replace(/-/g, '')}` : ''}`;

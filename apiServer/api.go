@@ -76,6 +76,8 @@ func (s *ApiServer) router(w http.ResponseWriter, r *http.Request) {
 		http.StripPrefix(fmt.Sprintf("/%s/recall", collection), http.FileServer(http.FS(staticFiles))).ServeHTTP(w, r)
 	case r.Method == "GET" && action == "search":
 		s.search(w, r, collection)
+	case r.Method == "GET" && action == "download":
+		s.download(w, r, collection)
 	default:
 		http.Error(w, "Not found", http.StatusNotFound)
 	}
@@ -94,6 +96,18 @@ func (s *ApiServer) uploadDocument(w http.ResponseWriter, r *http.Request, colle
 	}
 
 	id := md5Hash(document.DocumentName)
+
+	// must defer to delete here ?
+	defer func() {
+		if document.DocumentID != "" && document.DocumentID != id {
+			err := s.db.DeleteByID(collection, document.DocumentID)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+	}()
+
 	text := fmt.Sprintf("Document name: %s\n%s", document.DocumentName, document.DocumentContent)
 	metadata := map[string]string{
 		"extra":    document.Extra,
@@ -175,9 +189,9 @@ func (s *ApiServer) retrieveDocument(w http.ResponseWriter, r *http.Request, col
 func (s *ApiServer) search(w http.ResponseWriter, r *http.Request, collection string) {
 	query := r.URL.Query().Get("q")
 
-	serverAddr := os.Getenv("SERVER_ADDR")
+	serverAddr := os.Getenv("API_LISTEN_ADDR")
 	if serverAddr == "" {
-		serverAddr = "http://localhost:8000"
+		serverAddr = "127.0.0.1:8601"
 	}
 
 	results, err := s.db.Search(collection, query, 10)
@@ -194,11 +208,15 @@ func (s *ApiServer) search(w http.ResponseWriter, r *http.Request, collection st
 			"document_content": result.Metadata["content"],
 			"extra":            result.Metadata["extra"],
 			"update":           result.Metadata["update"],
-			"url":              fmt.Sprintf("%s/%s", serverAddr, result.ID),
+			"url":              fmt.Sprintf("http://%s/%s/download?id=%s", serverAddr, collection, result.ID),
 			"similarity":       result.Similarity,
 		}
 		documents = append(documents, docInfo)
 	}
 
 	json.NewEncoder(w).Encode(documents)
+}
+
+func (s *ApiServer) download(w http.ResponseWriter, r *http.Request, collection string) {
+	w.Write([]byte("TODO"))
 }
