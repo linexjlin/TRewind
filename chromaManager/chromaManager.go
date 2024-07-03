@@ -7,7 +7,7 @@ import (
 
 	"github.com/joho/godotenv"
 
-	"github.com/philippgille/chromem-go"
+	chromem "github.com/philippgille/chromem-go"
 )
 
 func init() {

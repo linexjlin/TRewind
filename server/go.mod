@@ -2,9 +2,11 @@ module github.com/linexjlin/TRewind/server
 
 go 1.22.4
 
+replace github.com/linexjlin/TRewind/apiServer => ../apiServer
+
 require (
 	github.com/joho/godotenv v1.5.1
-	github.com/linexjlin/TRewind/apiServer v0.0.0-20240702083058-bb0a612a47b7
+	github.com/linexjlin/TRewind/apiServer v0.0.0-00010101000000-000000000000 // indirect
 	github.com/linexjlin/TRewind/chromaManager v0.0.0-20240702082403-1279a40b88d7
 )
 

@@ -47,5 +47,7 @@ func main() {
 		}
 	}()
 
+	hideWinConsole()
+
 	tray.Run()
 }

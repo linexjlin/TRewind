@@ -1,6 +1,7 @@
 package apiServer
 
 import (
+	"embed"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -11,6 +12,9 @@ import (
 
 	"github.com/linexjlin/TRewind/chromaManager"
 )
+
+//go:embed ui/*
+var staticFiles embed.FS
 
 type Document struct {
 	DocumentID      string `json:"document_id,omitempty"`
@@ -68,6 +72,8 @@ func (s *ApiServer) router(w http.ResponseWriter, r *http.Request) {
 		s.deleteDocumentByName(w, r, collection)
 	case r.Method == "GET" && action == "retrieve_document":
 		s.retrieveDocument(w, r, collection)
+	case r.Method == "GET" && action == "recall":
+		http.StripPrefix(fmt.Sprintf("/%s/recall", collection), http.FileServer(http.FS(staticFiles))).ServeHTTP(w, r)
 	case r.Method == "GET" && action == "search":
 		s.search(w, r, collection)
 	default:
