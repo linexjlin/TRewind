@@ -26,7 +26,7 @@ func NewSysTray(c *Core) *SysTray {
 	}
 
 	serverAddr := os.Getenv("API_LISTEN_ADDR")
-	if serverAddr != "" {
+	if serverAddr == "" {
 		serverAddr = "127.0.0.1:8601"
 	}
 
@@ -72,7 +72,7 @@ func (st *SysTray) onReady() {
 	for _, collection := range allCollections {
 		systray.AddSeparator()
 		systray.AddSeparator()
-		mSearch := systray.AddMenuItem(fmt.Sprintf("%s %s", collection, UMenuText("Search")), UMenuText("Search"))
+		mSearch := systray.AddMenuItem(fmt.Sprintf("[%s] %s", collection, UMenuText("Search")), UMenuText("Search"))
 		go func() {
 			for {
 				<-mSearch.ClickedCh
@@ -80,7 +80,7 @@ func (st *SysTray) onReady() {
 			}
 		}()
 
-		mAdd := systray.AddMenuItem(fmt.Sprintf("%s %s", collection, UMenuText("Add All")), UMenuText("Add new doc from clipboard"))
+		mAdd := systray.AddMenuItem(fmt.Sprintf("[%s] %s", collection, UMenuText("Add All")), UMenuText("Add new doc from clipboard"))
 		go func() {
 			for {
 				<-mAdd.ClickedCh
@@ -95,7 +95,7 @@ func (st *SysTray) onReady() {
 			}
 		}()
 
-		mAddExtra := systray.AddMenuItem(fmt.Sprintf("%s %s", collection, UMenuText("Add First Line Only")), UMenuText("Add first line only to Extra from clipboard"))
+		mAddExtra := systray.AddMenuItem(fmt.Sprintf("[%s] %s", collection, UMenuText("Add First Line Only")), UMenuText("Add first line only to Extra from clipboard"))
 		go func() {
 			for {
 				<-mAddExtra.ClickedCh
@@ -110,7 +110,7 @@ func (st *SysTray) onReady() {
 			}
 		}()
 
-		mDelByName := systray.AddMenuItem(fmt.Sprintf("%s %s", collection, UMenuText("Del by Name")), UMenuText("Del doc by Name from clipboard"))
+		/*mDelByName := systray.AddMenuItem(fmt.Sprintf("[%s] %s", collection, UMenuText("Del by Name")), UMenuText("Del doc by Name from clipboard"))
 		go func() {
 			for {
 				<-mDelByName.ClickedCh
@@ -125,7 +125,7 @@ func (st *SysTray) onReady() {
 			}
 		}()
 
-		mDelByID := systray.AddMenuItem(fmt.Sprintf("%s %s", collection, UMenuText("Del by ID")), UMenuText("Del doc by ID from clipboard"))
+		mDelByID := systray.AddMenuItem(fmt.Sprintf("[%s] %s", collection, UMenuText("Del by ID")), UMenuText("Del doc by ID from clipboard"))
 		go func() {
 			for {
 				<-mDelByID.ClickedCh
@@ -138,6 +138,6 @@ func (st *SysTray) onReady() {
 					st.core.delDocByID(collection, clipboardText)
 				}
 			}
-		}()
+		}()*/
 	}
 }

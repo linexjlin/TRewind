@@ -18,7 +18,7 @@ var baseDataRoot = "imported"
 
 func saveToFile(category, id, position, input string) error {
 	// 获取当前日期目录
-	dateDir := fmt.Sprintf("%s/%s", baseDataRoot, time.Now().Format("2006-01-02"))
+	dateDir := fmt.Sprintf("%s/%s/%s", baseDataRoot, time.Now().Format("2006-01-02"), category)
 	if _, err := os.Stat(dateDir); os.IsNotExist(err) {
 		if err := os.MkdirAll(dateDir, 0755); err != nil {
 			return fmt.Errorf("failed to create directory: %v", err)
@@ -37,7 +37,7 @@ func saveToFile(category, id, position, input string) error {
 	}
 
 	// 生成文件名
-	fileName := fmt.Sprintf("%s/%s-%s-%s-%s···.txt", dateDir, category, id, position, string(peekChars))
+	fileName := fmt.Sprintf("%s/%s-%s-%s···.txt", dateDir, id, position, string(peekChars))
 
 	// 创建文件并写入内容
 	file, err := os.Create(fileName)
