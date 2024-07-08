@@ -40,11 +40,11 @@
             <div x-show="results.length > 0" class="space-y-6">
                 <template x-for="(result, index) in results" :key="result.document_id">
                     <div :class="['bg-white p-6 rounded-lg shadow', index % 2 === 0 ? 'bg-blue-40' : 'bg-blue-20']">
-                        <h2 class="text-xl font-semibold mb-2 content-wrap text-blue-800" x-text="(lang === 'zh' ? '━' : '━')"></h2>
+                        <h2 class="text-xl font-semibold mb-2 content-wrap text-blue-800 text-center" x-text="(lang === 'zh' ? '━' : '━')"></h2>
                         <p class="text-blue-600 mb-4 content-wrap" x-text="result.document_name"></p>
-                        <h2 class="text-xl font-semibold mb-2 content-wrap text-blue-800" x-text="(lang === 'zh' ? '━' : '━')"></h2>
+                        <h2 class="text-xl font-semibold mb-2 content-wrap text-blue-800 text-center" x-text="(lang === 'zh' ? '━━' : '━━')"></h2>
                         <div class="text-blue-600 mb-2 content-wrap" x-html="formatContent(result.document_content)"></div>
-                        <h2 class="text-xl font-semibold mb-2 content-wrap text-blue-800" x-text="(lang === 'zh' ? '━━' : '━━')"></h2>
+                        <h2 class="text-xl font-semibold mb-2 content-wrap text-blue-800 text-center" x-text="(lang === 'zh' ? '━━━' : '━━━')"></h2>
                         <p class="text-blue-600 mb-4 content-wrap" x-text="result.extra"></p>
                         <hr></hr>
                         <div class="flex justify-between items-center">
