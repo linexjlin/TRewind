@@ -188,13 +188,14 @@ func (s *ApiServer) retrieveDocument(w http.ResponseWriter, r *http.Request, col
 
 func (s *ApiServer) search(w http.ResponseWriter, r *http.Request, collection string) {
 	query := r.URL.Query().Get("q")
+	dateFilter := r.URL.Query().Get("df")
 
 	serverAddr := os.Getenv("API_LISTEN_ADDR")
 	if serverAddr == "" {
 		serverAddr = "127.0.0.1:8601"
 	}
 
-	results, err := s.db.Search(collection, query, 10)
+	results, err := s.db.Search(collection, query, 50)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -211,7 +212,14 @@ func (s *ApiServer) search(w http.ResponseWriter, r *http.Request, collection st
 			"url":              fmt.Sprintf("http://%s/%s/download?id=%s", serverAddr, collection, result.ID),
 			"similarity":       result.Similarity,
 		}
-		documents = append(documents, docInfo)
+
+		if dateFilter != "" {
+			if strings.HasPrefix(result.Metadata["update"], dateFilter) {
+				documents = append(documents, docInfo)
+			}
+		} else {
+			documents = append(documents, docInfo)
+		}
 	}
 
 	json.NewEncoder(w).Encode(documents)

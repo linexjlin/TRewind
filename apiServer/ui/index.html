@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title x-text="lang === 'zh' ? '搜索' : 'Search'">搜索</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.3/cdn.min.js" defer></script>
+    <script src="https://cn-hz-ali.oss-cn-hangzhou.aliyuncs.com/js/tailwindcss-3.4.4.js"></script>
+    <script src="https://cn-hz-ali.oss-cn-hangzhou.aliyuncs.com/js/cdn.min.js" defer></script>
     <style>
         .content-wrap {
             white-space: pre-wrap;
@@ -39,13 +39,14 @@
             
             <div x-show="results.length > 0" class="space-y-6">
                 <template x-for="(result, index) in results" :key="result.document_id">
-                    <div :class="['bg-white p-6 rounded-lg shadow', index % 2 === 0 ? 'bg-blue-100' : 'bg-blue-50']">
-                        <h2 class="text-xl font-semibold mb-2 content-wrap text-blue-800" x-text="(lang === 'zh' ? '文档主题: ' : 'Name: ')"></h2>
+                    <div :class="['bg-white p-6 rounded-lg shadow', index % 2 === 0 ? 'bg-blue-40' : 'bg-blue-20']">
+                        <h2 class="text-xl font-semibold mb-2 content-wrap text-blue-800" x-text="(lang === 'zh' ? '━' : '━')"></h2>
                         <p class="text-blue-600 mb-4 content-wrap" x-text="result.document_name"></p>
-                        <h2 class="text-xl font-semibold mb-2 content-wrap text-blue-800" x-text="(lang === 'zh' ? '文档内容: ' : 'Content: ')"></h2>
+                        <h2 class="text-xl font-semibold mb-2 content-wrap text-blue-800" x-text="(lang === 'zh' ? '━' : '━')"></h2>
                         <div class="text-blue-600 mb-2 content-wrap" x-html="formatContent(result.document_content)"></div>
-                        <h2 class="text-xl font-semibold mb-2 content-wrap text-blue-800" x-text="(lang === 'zh' ? '额外信息: ' : 'Extra: ')"></h2>
+                        <h2 class="text-xl font-semibold mb-2 content-wrap text-blue-800" x-text="(lang === 'zh' ? '━━' : '━━')"></h2>
                         <p class="text-blue-600 mb-4 content-wrap" x-text="result.extra"></p>
+                        <hr></hr>
                         <div class="flex justify-between items-center">
                             <div class="text-blue-500 text-xs content-wrap">
                                 <p>Similarity: <span x-text="result.similarity" class="text-blue-700 font-semibold"></span>  Update: <span x-text="result.update" class="text-blue-700 font-semibold"></span> URL: <a :href="result.url" class="text-blue-600 underline" target="_blank">Dowload</a></p>
@@ -59,7 +60,7 @@
                 </template>
             </div>
             
-            <div x-show="results.length === 0 && hasSearched" class="text-center text-gray-600" x-text="lang === 'zh' ? '没有找到相关结果' : 'No results found'">
+            <div x-show="results.length === 0 && hasSearched" class="text-center text-gray-600" x-text="lang === 'zh' ? '搜索中 ...' : 'Search ...'">
             </div>
         </div>
     </div>
