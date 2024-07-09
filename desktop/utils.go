@@ -2,9 +2,12 @@ package main
 
 import (
 	"crypto/md5"
+	"crypto/tls"
 	"encoding/hex"
 	"fmt"
+	"net"
 	"os"
+	"strings"
 	"time"
 	"unicode"
 )
@@ -70,4 +73,22 @@ func extractFilenameAndExtra(input string) (name, extra string) {
 		name += string(r)
 	}
 	return name, extra
+}
+
+func checkSSL(address string) (bool, error) {
+	conn, err := tls.DialWithDialer(&net.Dialer{
+		Timeout: 2 * time.Second,
+	}, "tcp", address, &tls.Config{
+		InsecureSkipVerify: true,
+	})
+
+	if err != nil {
+		if strings.Contains(fmt.Sprint(err), "timeout") {
+			return false, err
+		} else {
+			return false, nil
+		}
+	}
+	defer conn.Close()
+	return true, nil
 }

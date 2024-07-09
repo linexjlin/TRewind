@@ -27,25 +27,42 @@ func initUMenuText() {
 var Version = "dev"
 
 func main() {
-	if err := godotenv.Load(".env"); err != nil {
+	if err := godotenv.Load("env.txt"); err != nil {
 		log.Fatal("Error loading .env file")
 	}
 
 	initUText()
 	initUMenuText()
-	docDB, err := chromaManager.NewChromaManager()
-	if err != nil {
-		panic(err)
-	}
-	core := NewCore(docDB)
-	tray := NewSysTray(core)
 
-	go func() {
-		if listenAddr := os.Getenv("API_LISTEN_ADDR"); listenAddr != "" {
-			apiServer := apiServer.NewServer(docDB)
-			log.Fatal(apiServer.ListenAndServe(listenAddr))
+	backendAPI := ""
+
+	if remoteAPIAddr := os.Getenv("REMOTE_API_ADDR"); remoteAPIAddr != "" {
+		backendAPI = remoteAPIAddr
+	}
+
+	if listenAddr := os.Getenv("API_LISTEN_ADDR"); listenAddr != "" {
+		docDB, err := chromaManager.NewChromaManager()
+		if err != nil {
+			panic(err)
 		}
-	}()
+		apiServer := apiServer.NewServer(docDB)
+		backendAPI = listenAddr
+
+		go func() {
+			log.Fatal(apiServer.ListenAndServe(listenAddr))
+		}()
+	}
+
+	log.Println("using backend API:", backendAPI)
+
+	if isSSL, _ := checkSSL(backendAPI); isSSL {
+		os.Setenv("API_SCHEME", "https://")
+	} else {
+		os.Setenv("API_SCHEME", "http://")
+	}
+
+	core := NewCore(backendAPI)
+	tray := NewSysTray(core)
 
 	hideWinConsole()
 

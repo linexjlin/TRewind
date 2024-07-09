@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	if err := godotenv.Load(".env"); err != nil {
+	if err := godotenv.Load("env.txt"); err != nil {
 		log.Fatal("Error loading .env file")
 	}
 
@@ -19,7 +19,7 @@ func main() {
 
 	apiServer := apiServer.NewServer(docDB)
 
-	listenAddr := os.Getenv("LISTEN_ADDR")
+	listenAddr := os.Getenv("API_LISTEN_ADDR")
 	if listenAddr == "" {
 		listenAddr = "127.0.0.1:8601"
 	}

@@ -25,12 +25,7 @@ func NewSysTray(c *Core) *SysTray {
 		collections = []string{}
 	}
 
-	serverAddr := os.Getenv("API_LISTEN_ADDR")
-	if serverAddr == "" {
-		serverAddr = "127.0.0.1:8601"
-	}
-
-	tray := SysTray{core: c, defaultCollection: defaultCollection, collections: collections, serverAddr: serverAddr}
+	tray := SysTray{core: c, defaultCollection: defaultCollection, collections: collections, serverAddr: c.apiAddress}
 	return &tray
 }
 
@@ -76,7 +71,7 @@ func (st *SysTray) onReady() {
 		go func() {
 			for {
 				<-mSearch.ClickedCh
-				open.Start(fmt.Sprintf("http://%s/%s/recall/ui/", st.serverAddr, collection))
+				open.Start(fmt.Sprintf("%s%s/%s/recall/ui/", os.Getenv("API_SCHEME"), st.serverAddr, collection))
 			}
 		}()
 
@@ -109,35 +104,5 @@ func (st *SysTray) onReady() {
 				}
 			}
 		}()
-
-		/*mDelByName := systray.AddMenuItem(fmt.Sprintf("[%s] %s", collection, UMenuText("Del by Name")), UMenuText("Del doc by Name from clipboard"))
-		go func() {
-			for {
-				<-mDelByName.ClickedCh
-				if err := clipboard.Init(); err != nil {
-					log.Println(err)
-				}
-				clipboardText := string(clipboard.Read(clipboard.FmtText))
-				log.Println("Got clipboardText", clipboardText)
-				if len(clipboardText) > 0 {
-					st.core.delDocByName(collection, clipboardText)
-				}
-			}
-		}()
-
-		mDelByID := systray.AddMenuItem(fmt.Sprintf("[%s] %s", collection, UMenuText("Del by ID")), UMenuText("Del doc by ID from clipboard"))
-		go func() {
-			for {
-				<-mDelByID.ClickedCh
-				if err := clipboard.Init(); err != nil {
-					log.Println(err)
-				}
-				clipboardText := string(clipboard.Read(clipboard.FmtText))
-				log.Println("Got clipboardText", clipboardText)
-				if len(clipboardText) > 0 {
-					st.core.delDocByID(collection, clipboardText)
-				}
-			}
-		}()*/
 	}
 }

@@ -1,58 +1,76 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"log"
-	"time"
-
-	"github.com/linexjlin/TRewind/chromaManager"
+	"net/http"
 )
 
 type Core struct {
-	db *chromaManager.ChromaManager
+	apiAddress string
 }
 
-func NewCore(db *chromaManager.ChromaManager) *Core {
-	c := Core{db: db}
-	c.init()
+func NewCore(apiAddr string) *Core {
+	c := Core{apiAddress: apiAddr}
 	return &c
+}
+
+func (c *Core) uploadClipboard(collection, clipBoardContent, clipBoardType, importType string) {
+	api := fmt.Sprintf("%s/%s/upload_clipboard", c.apiAddress, collection)
+	// 创建一个 ClipBoard 结构体实例
+	cb := struct {
+		ClipBoardContent string `json:"clipBoardContent"`
+		ClipBoardType    string `json:"clipBoardType"`
+		ImportType       string `json:"importType"`
+	}{
+		ClipBoardContent: clipBoardContent,
+		ClipBoardType:    clipBoardType,
+		ImportType:       importType,
+	}
+
+	// 将结构体序列化为 JSON
+	jsonData, err := json.Marshal(cb)
+	if err != nil {
+		log.Println("Error marshalling JSON:", err)
+		return
+	}
+
+	// 创建一个 HTTP 客户端
+	client := &http.Client{}
+
+	// 创建一个 POST 请求
+	req, err := http.NewRequest("POST", api, bytes.NewBuffer(jsonData))
+	if err != nil {
+		log.Println("Error creating request:", err)
+		return
+	}
+
+	// 设置请求头
+	req.Header.Set("Content-Type", "application/json")
+
+	// 发送请求
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println("Error sending request:", err)
+		return
+	}
+	defer resp.Body.Close()
+	// 打印响应状态码
+	log.Println("Response status:", resp.Status)
 }
 
 func (c *Core) importToDocname(collection, text string) {
 	id := md5Hash(text)
-	metadata := map[string]string{
-		"update":   time.Now().Format("20060102150405"),
-		"filename": text,
-	}
 	saveToFile(collection, id, "name", text)
-	c.db.UpsertDoc(collection, text, id, metadata)
-	log.Println("imported", text)
+	c.uploadClipboard(collection, text, "Text", "DocName")
 }
 
 // only the fist line will be indexed, extra info will not be indexed
 func (c *Core) importToExtra(collection, input string) {
-	embText, extra := extractFilenameAndExtra(input)
+	embText, _ := extractFilenameAndExtra(input)
 	id := md5Hash(embText)
-	metadata := map[string]string{
-		"update":   time.Now().Format("20060102150405"),
-		"filename": embText,
-		"extra":    extra,
-	}
 	saveToFile(collection, id, "extra", input)
-	c.db.UpsertDoc(collection, embText, id, metadata)
-	log.Println("imported as extra", input)
-}
-
-func (c *Core) delDocByName(collection, name string) {
-	id := md5Hash(name)
-	c.db.DeleteByID(collection, id)
-	log.Println("del file", name)
-}
-
-func (c *Core) delDocByID(collection, id string) {
-	c.db.DeleteByID(collection, id)
-	log.Println("del ID", id)
-}
-
-func (c *Core) init() {
-	//
+	c.uploadClipboard(collection, input, "Text", "Extra")
 }
