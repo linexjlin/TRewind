@@ -66,6 +66,8 @@ func (s *ApiServer) router(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case r.Method == "POST" && action == "upload_document":
 		s.uploadDocument(w, r, collection)
+	case r.Method == "POST" && action == "upload_clipboard":
+		s.uploadClipboard(w, r, collection)
 	case r.Method == "DELETE" && action == "delete_document_by_id":
 		s.deleteDocumentByID(w, r, collection)
 	case r.Method == "DELETE" && action == "delete_document_by_name":
@@ -227,4 +229,51 @@ func (s *ApiServer) search(w http.ResponseWriter, r *http.Request, collection st
 
 func (s *ApiServer) download(w http.ResponseWriter, r *http.Request, collection string) {
 	w.Write([]byte("TODO"))
+}
+
+func (s *ApiServer) uploadClipboard(w http.ResponseWriter, r *http.Request, collection string) {
+	type ClipBoard struct {
+		ClipBoardContent string
+		ClipBoardType    string
+		ImportType       string
+	}
+
+	var cb ClipBoard
+	if err := json.NewDecoder(r.Body).Decode(&cb); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	switch cb.ImportType {
+	case "DocName":
+		fmt.Println("DocName")
+		s.importToDocname(collection, cb.ClipBoardContent)
+	case "Extra":
+		fmt.Println("Extra")
+		s.importToExtra(collection, cb.ClipBoardContent)
+	}
+}
+
+func (s *ApiServer) importToDocname(collection, text string) {
+	id := md5Hash(text)
+	metadata := map[string]string{
+		"update":   time.Now().Format("20060102150405"),
+		"filename": text,
+	}
+
+	s.db.UpsertDoc(collection, text, id, metadata)
+	log.Println("imported", text)
+}
+
+// only the fist line will be indexed, extra info will not be indexed
+func (s *ApiServer) importToExtra(collection, input string) {
+	embText, extra := extractFilenameAndExtra(input)
+	id := md5Hash(embText)
+	metadata := map[string]string{
+		"update":   time.Now().Format("20060102150405"),
+		"filename": embText,
+		"extra":    extra,
+	}
+	s.db.UpsertDoc(collection, embText, id, metadata)
+	log.Println("imported as extra", input)
 }
