@@ -21,21 +21,22 @@ Text based memory rewind tool.
 
 # About Configuration
 
-All configurations are in the .env file.
+All configurations are in the env.txt file.
 
 ```
 OLLAMA_EMBED_URL = "https://oapi.chinatcc.com/api"  # By default, this app uses a hosted Ollama server. You can change to your local Ollama server by modifying this line to `OLLAMA_EMBED_URL = "http://127.0.0.1:13134/api"`
 OLLAMA_EMBED_MODE = "qwq5km"  # By default, I am using gte-qwen2-7b as my embedding mode
-EMBED_DIR = ".docs_db"  # Local embedding store
+EMBED_DIR = "docs_db"  # Local embedding store
 DEFAULT_COLLECTION = "docs"  # The default category of memory
 COLLECTIONS = "idea;code;web_excerpt"  # Add/delete categories of memory
 API_LISTEN_ADDR = "127.0.0.1:8601"  # Local API server listen address
+REMOTE_API_ADDR="127.0.0.1:8601" # Use a remote server instead of a local API server to allow cross-platform add and recall.
 ```
 
 # Credit
 
-- github.com/philippgille/chromem-go
+- [github.com/philippgille/chromem-go](https://github.com/philippgille/chromem-go)
 
-- golang.design/x/clipboard
+- [golang.design/x/clipboard](https://github.com/golang-design/clipboard)
 
-- github.com/getlantern/systray
+- [github.com/getlantern/systray](https://github.com/getlantern/systray)
