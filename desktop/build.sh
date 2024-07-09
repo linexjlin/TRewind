@@ -1,0 +1,1 @@
+go build -ldflags="-s -w -X 'main.Version=v0.0.1'" -o TRwind core.go hide_darwin.go main.go systray.go utils.go
