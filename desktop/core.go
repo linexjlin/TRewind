@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
 
 type Core struct {
@@ -18,7 +19,7 @@ func NewCore(apiAddr string) *Core {
 }
 
 func (c *Core) uploadClipboard(collection, clipBoardContent, clipBoardType, importType string) {
-	api := fmt.Sprintf("%s/%s/upload_clipboard", c.apiAddress, collection)
+	api := fmt.Sprintf("%s%s/%s/upload_clipboard", os.Getenv("API_SCHEME"), c.apiAddress, collection)
 	// 创建一个 ClipBoard 结构体实例
 	cb := struct {
 		ClipBoardContent string `json:"clipBoardContent"`

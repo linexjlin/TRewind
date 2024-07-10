@@ -1,1 +1,1 @@
-go build -ldflags="-s -w -X 'main.Version=v0.0.2'"
+go build -ldflags="-s -w -X 'main.Version=v0.1.0'"
