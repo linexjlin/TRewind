@@ -27,8 +27,12 @@ func initUMenuText() {
 var Version = "dev"
 
 func main() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
 	if err := godotenv.Load("env.txt"); err != nil {
-		log.Fatal("Error loading .env file")
+		log.Println(err)
+		log.Error("Error loading .env file")
+		return
 	}
 
 	initUText()
